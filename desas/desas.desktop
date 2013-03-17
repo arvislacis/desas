@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Desas
+Comment=Spēle - Desas
+Exec=desas --start
+Terminal=false
+Type=Application
+Encoding=UTF-8
+Icon=/opt/desas/images/icon.png
+Categories=Game;
+StartupNotify=true
