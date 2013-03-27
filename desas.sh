@@ -3,23 +3,19 @@
 cels=/opt/desas
 ver="v2.4"
 
-if [ -f /usr/bin/apt-get ]
-then
+if [[ -f /usr/bin/apt-get ]]; then
 	os="Debian"
-elif [ -f /usr/bin/yum ]
-then
+elif [[ -f /usr/bin/yum ]]; then
 	os="Red Hat"
 else
-	if [ -f /usr/bin/pacman ]
-	then
+	if [[ -f /usr/bin/pacman ]]; then
 		os="Arch Linux"
 	else
 		os="nezināma"
 	fi
 fi
 
-if [ "$os" == "nezināma" ]
-then
+if [[ "$os" == "nezināma" ]]; then
 	echo "Atvainojiet, jūsu izmantotā sitēma pašlaik netiek atbalstīta, sazinieties ar skripta izstrādātāju!"
 	zenity --error --title="Neatbalstīta sistēma" --text="<b><span color=\"red\">Atvainojiet, jūsu izmantotā sitēma pašlaik netiek atbalstīta, sazinieties ar skripta izstrādātāju!</span></b>"
 	exit 1
@@ -27,10 +23,8 @@ fi
 
 case $1 in
 	"")
-		if [ $UID -eq 0 ]
-		then
-			if [ -f /usr/bin/desas ]
-			then
+		if [[ $UID -eq 0 ]]; then
+			if [[ -f /usr/bin/desas ]]; then
 				darbiba=$(zenity --list --title="Izvēlieties darbību" --text="Spēle <b>Desas $ver</b> jau ir instalēta jūsu sistēmā." --column="Veicamā darbība" "Palaist spēli" "Atjaunināt spēles datnes" "Atinstalēt spēli" "Palīdzība" "Par...")
 				
 				case $darbiba in
@@ -38,9 +32,8 @@ case $1 in
 						desas --start
 						exit 1;;
 					"Atjaunināt spēles datnes")
-						if [ "$0" == "/usr/bin/desas" ]
-						then
-							zenity --error --title="Nevar atjaunināt" --text="<b><span color=\"red\">Spēles datņu atjaunināšana iespējama tikai no instalācijas skripta (desas.install).</span></b>"
+						if [[ "$0" == "/usr/bin/desas" ]]; then
+							zenity --error --title="Nevar atjaunināt" --text="<b><span color=\"red\">Spēles datņu atjaunināšana iespējama tikai no instalācijas skripta (desas.sh).</span></b>"
 							exit 1
 						fi;;
 					"Atinstalēt spēli")
@@ -55,8 +48,7 @@ case $1 in
 				esac
 			fi
 			
-			if [ ! -f /usr/bin/zenity ]
-			then
+			if [[ ! -f /usr/bin/zenity ]]; then
 				(case $os in
 					"Debian")
 						apt-get install zenity;;
@@ -69,8 +61,7 @@ case $1 in
 			
 			zenity --info --title="Desas instalēšanas rīks v0.8.0" --text="Esiet sveicināti spēles <b>Desas $ver</b> instalēšanas rīkā.\n\nNospiediet <b>OK</b>, lai turpinātu instalēšanas procesu."
 			
-			if [ ! -f /usr/bin/python ]
-			then
+			if [[ ! -f /usr/bin/python ]]; then
 				(case $os in
 					"Debian")
 						apt-get install python;;
@@ -81,8 +72,7 @@ case $1 in
 				esac) | zenity --progress --title="Python pakotnes instalēšana" --text="Uzgaidiet, notiek <b>Python</b> pakotnes instalēšana." --auto-close --pulsate
 			fi
 			
-			if ! [ -f /usr/lib/python2.7/lib-dynload/_tkinter.so ] || [ -d /usr/lib/python2.7/lib-dynload/_tkinter.so ]
-			then
+			if [[ ! (( -f /usr/lib/python2.7/lib-dynload/_tkinter.so ) || ( -d /usr/lib/python2.7/lib-dynload/_tkinter.so )) ]]; then
 				(case $os in
 					"Debian")
 						apt-get install python-tk;;
@@ -100,8 +90,7 @@ case $1 in
 			cp -fu ./desas/desas /usr/bin
 			cp -fu ./desas/desas.desktop /usr/share/applications) | zenity --progress --title="Datņu kopēšana" --text="Uzgaidiet, notiek <b>Desas $ver</b> datņu kopēšana." --auto-close --pulsate
 			
-			if [ -f /usr/bin/desas ]
-			then
+			if [[ -f /usr/bin/desas ]]; then
 				zenity --question --title="Instalēšana pabeigta" --text="<b>Desas $ver</b> instalēšana veiksmīgi pabeigta!\nVai vēlaties tagad palaist spēli?"
 				case $? in
 					0)
@@ -113,20 +102,18 @@ case $1 in
 				zenity --error --title="Kļūda instalēšanā" --text="<b><span color=\"red\">Atvainojiet, instalēšanas procesā radās kļūda. Mēģiniet palaist instalēšanas skriptu vēlreiz vai arī sazinieties ar skripta izstrādātāju.</span></b>"
 			fi
 		else
-			if [ "$0" == "/usr/bin/desas" ]
-			then
+			if [[ "$0" == "/usr/bin/desas" ]]; then
 				desas --start
 				exit 1
 			fi
 			
-			if [ ! -f /usr/bin/gksu ]
-			then
+			if [[ ! -f /usr/bin/gksu ]]; then
 				echo "Lai instalētu Desas $ver, nepieciešamas sudo piekļuves tiesības."
-				echo "Terminālī izpildiet sekojošu komandu: desas ./desas.install."
+				echo "Terminālī izpildiet sekojošu komandu: desas ./desas.sh."
 				echo
 				echo "Ja izmantojiet Debian (Ubuntu, Linux Mint...) vai Arch Linux bāzētu sistēmu,"
 				echo "varat instalēt pakotni gksu un pēc tam atkārtoti palaidiet šo skriptu."
-				zenity --error --title="Nepieciešamas sudo piekļuves tiesības" --text="<span color=\"red\">Lai instalētu spēli, nepieciešamas sudo piekļuves tiesības.\nTerminālī izpildiet sekojošu komandu: <b>sudo ./desas.install</b>.\n\nJa izmantojiet Debian (Ubuntu, Linux Mint...) vai Arch Linux bāzētu sistēmu, varat instalēt pakotni <b>gksu</b> un pēc tam atkārtoti palaidiet šo skriptu.</span>"
+				zenity --error --title="Nepieciešamas sudo piekļuves tiesības" --text="<span color=\"red\">Lai instalētu spēli, nepieciešamas sudo piekļuves tiesības.\nTerminālī izpildiet sekojošu komandu: <b>sudo ./desas.sh</b>.\n\nJa izmantojiet Debian (Ubuntu, Linux Mint...) vai Arch Linux bāzētu sistēmu, varat instalēt pakotni <b>gksu</b> un pēc tam atkārtoti palaidiet šo skriptu.</span>"
 				exit 1
 			fi
 			
@@ -143,7 +130,7 @@ case $1 in
 		zenity --info --title="Desas $ver palīdzība" --text="Terminālī iespējams izmantot šādas komandas:\n<b>desas --about</b>\t- vispārīgās informācijas parādīšana\n<b>desas --help</b>\t- šī palīdzības loga parādīšana\n<b>desas --start</b>\t- spēles palaišana\n\nAr sudo piekļuves tiesībām papildus iespējams izpildīt šādu komandu:\n<b>desas --remove</b>\t- spēles atinstalēšana";;
 		
 	-r|--remove|--uninstall|--atinstalet|--nonemt)
-		if [ $UID -eq 0 ]; then
+		if [[ $UID -eq 0 ]]; then
 			(rm -rf /opt/desas
 			rm -f /usr/bin/desas
 			rm -f /usr/share/applications/desas.desktop) |  zenity --progress --title="Datņu dzēšana" --text="Uzgaidiet, notiek <b>Desas $ver</b> datņu dzēšana." --auto-close --pulsate
